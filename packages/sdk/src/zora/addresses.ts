@@ -5,6 +5,10 @@ export const Exchange: ChainIdToAddress = {
   [Network.EthereumGoerli]: "0xd8be3e8a8648c4547f06e607174bac36f5684756",
   [Network.Polygon]: "0x3634e984ba0373cfa178986fd19f03ba4dd8e469",
   [Network.EvmosTestnet]: "0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC",
+  [Network.AuraTestnet]: "0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC",
+  [Network.AuraSerenity]: "0x09d099937104B8eB319eCCee930A0f547c476Be4",
+  [Network.AuraEuphoria]: "0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC",
+  [Network.AuraXstasy]: "0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC",
 };
 
 export const AuctionHouse: ChainIdToAddress = {
@@ -16,6 +20,10 @@ export const ModuleManager: ChainIdToAddress = {
   [Network.EthereumGoerli]: "0x9458e29713b98bf452ee9b2c099289f533a5f377",
   [Network.Polygon]: "0xcca379fdf4beda63c4bb0e2a3179ae62c8716794",
   [Network.EvmosTestnet]: "0x6779178Ba139A61890A0B05a15045dF2ED0ae2dd",
+  [Network.AuraTestnet]: "0x6779178Ba139A61890A0B05a15045dF2ED0ae2dd",
+  [Network.AuraSerenity]: "0xeCCe4e0c0F77553E9eFf275d9831Af50a4AFd6D8",
+  [Network.AuraEuphoria]: "0x6779178Ba139A61890A0B05a15045dF2ED0ae2dd",
+  [Network.AuraXstasy]: "0x6779178Ba139A61890A0B05a15045dF2ED0ae2dd",
 };
 
 export const Erc721TransferHelper: ChainIdToAddress = {
@@ -23,6 +31,10 @@ export const Erc721TransferHelper: ChainIdToAddress = {
   [Network.EthereumGoerli]: "0xd1adaf05575295710de1145c3c9427c364a70a7f",
   [Network.Polygon]: "0xce6cef2a9028e1c3b21647ae3b4251038109f42a",
   [Network.EvmosTestnet]: "0x7a56178610624943aeDF11Ce7b7C9d991aFBCc36",
+  [Network.AuraTestnet]: "0x7a56178610624943aeDF11Ce7b7C9d991aFBCc36",
+  [Network.AuraSerenity]: "0x84b7BA21713A1DBA7E6E8268b68c4a94AbAC8A09",
+  [Network.AuraEuphoria]: "0x7a56178610624943aeDF11Ce7b7C9d991aFBCc36",
+  [Network.AuraXstasy]: "0x7a56178610624943aeDF11Ce7b7C9d991aFBCc36",
 };
 
 export const Erc20TransferHelper: ChainIdToAddress = {
@@ -30,6 +42,10 @@ export const Erc20TransferHelper: ChainIdToAddress = {
   [Network.EthereumGoerli]: "0x53172d999a299198a935f9e424f9f8544e3d4292",
   [Network.Polygon]: "0x909e9efe4d87d1a6018c2065ae642b6d0447bc91",
   [Network.EvmosTestnet]: "0xE30E6Fb2c7f2A24a770cfa7E2c31a989D24AC616",
+  [Network.AuraTestnet]: "0xE30E6Fb2c7f2A24a770cfa7E2c31a989D24AC616",
+  [Network.AuraSerenity]: "0xC4041660cda6088993Bc5B939B43E0ac84056b6f",
+  [Network.AuraEuphoria]: "0xE30E6Fb2c7f2A24a770cfa7E2c31a989D24AC616",
+  [Network.AuraXstasy]: "0xE30E6Fb2c7f2A24a770cfa7E2c31a989D24AC616",
 };
 
 export const ERC1155Factory: ChainIdToAddress = {
