@@ -15,7 +15,7 @@ export class AskCancelledEventHandler extends AskCreatedEventHandler {
   }
 
   getActivityId(): string {
-    if (this.txHash && this.logIndex) {
+    if (this.txHash && this.logIndex !== undefined && this.logIndex !== null) {
       return getActivityHash(
         this.txHash,
         this.logIndex.toString(),
