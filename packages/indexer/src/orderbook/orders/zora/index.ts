@@ -173,8 +173,11 @@ export const save = async (orderInfos: OrderInfo[]): Promise<SaveResult[]> => {
                 currency_price = $/price/,
                 value = $/price/,
                 currency_value = $/price/,
-                valid_between = tstzrange(date_trunc('seconds', to_timestamp(${orderParams.txTimestamp})), 'Infinity', '[]'),
+                valid_between = tstzrange(date_trunc('seconds', to_timestamp(${
+                  orderParams.txTimestamp
+                })), 'Infinity', '[]'),
                 expiration = 'Infinity',
+                ${fillabilityStatus == "fillable" ? "originated_at = now()," : ""}
                 updated_at = now(),
                 taker = $/taker/,
                 raw_data = $/orderParams:json/,
