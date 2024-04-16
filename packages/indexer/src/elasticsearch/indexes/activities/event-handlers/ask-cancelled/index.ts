@@ -84,6 +84,7 @@ export class AskCancelledEventHandler extends AskCreatedEventHandler {
                         cancel_events.block_hash AS "event_block_hash",
                         extract(epoch from cancel_events.created_at) AS "event_created_ts"
                     FROM cancel_events WHERE cancel_events.order_id = orders.id
+                    ORDER BY block DESC
                     LIMIT 1
                  ) x ON TRUE`;
   }
@@ -104,7 +105,7 @@ export class AskCancelledEventHandler extends AskCreatedEventHandler {
     const results = await idb.manyOrNone(
       `
                 ${AskCancelledEventHandler.buildBaseQuery()}
-                WHERE (id) IN ($/eventsFilter:raw/);  
+                WHERE (id) IN ($/eventsFilter:raw/);
                 `,
       { eventsFilter: _.join(eventsFilter, ",") }
     );

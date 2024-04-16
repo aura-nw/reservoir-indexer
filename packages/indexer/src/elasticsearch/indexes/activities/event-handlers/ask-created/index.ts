@@ -46,7 +46,7 @@ export class AskCreatedEventHandler extends BaseActivityEventHandler {
   }
 
   getActivityId(): string {
-    if (this.txHash && this.logIndex && this.batchIndex) {
+    if (this.txHash && this.logIndex !== null && this.logIndex !== undefined && this.batchIndex) {
       return getActivityHash(this.txHash, this.logIndex.toString(), this.batchIndex.toString());
     }
 
