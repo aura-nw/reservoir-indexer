@@ -882,7 +882,7 @@ export const getUserTokensV10Options: RouteOptions = {
               1
           ) ELSE t.floor_sell_id END
           ${userCollectionsSorting}
-          ${sortFullResultsSet ? nftBalanceSorting : ""}
+          ${nftBalanceSorting}
           ${limitFullResultsSet ? limit : ""}
       `;
 
