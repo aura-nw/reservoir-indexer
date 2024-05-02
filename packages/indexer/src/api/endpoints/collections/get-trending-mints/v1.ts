@@ -41,7 +41,7 @@ export const getTrendingMintsV1Options: RouteOptions = {
   validate: {
     query: Joi.object({
       period: Joi.string()
-        .valid("5m", "10m", "30m", "1h", "2h", "6h", "24h")
+        .valid("5m", "10m", "30m", "1h", "2h", "6h", "24h", "1d", "7d", "30d")
         .default("24h")
         .description("Time window to aggregate."),
       type: Joi.string()
