@@ -5,7 +5,7 @@ import { config } from "@/config/index";
 export const normalizeLink = (link: string) => {
   if (link && link.startsWith("ipfs://")) {
     if (config.ipfsGatewayDomain) {
-      return `http://${config.ipfsGatewayDomain}:8080/ipfs/${link.slice(7)}`;
+      return `https://${config.ipfsGatewayDomain}/ipfs/${link.slice(7)}`;
     } else {
       return `https://ipfs.io/ipfs/${link.slice(7)}`;
     }
@@ -13,7 +13,7 @@ export const normalizeLink = (link: string) => {
 
   if (link && link.startsWith("ipfs/")) {
     if (config.ipfsGatewayDomain) {
-      return `http://${config.ipfsGatewayDomain}:8080/ipfs/${link.slice(5)}`;
+      return `https://${config.ipfsGatewayDomain}/ipfs/${link.slice(5)}`;
     } else {
       return `https://ipfs.io/ipfs/${link.slice(5)}`;
     }

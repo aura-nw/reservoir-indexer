@@ -51,7 +51,7 @@ export const toSafeNumber = (value?: BigNumberish) => {
 export const fetchMetadata = async (url: string) => {
   if (url.startsWith("ipfs://")) {
     if (config.ipfsGatewayDomain) {
-      url = `http://${config.ipfsGatewayDomain}:8080/ipfs/${url.slice(7)}`;
+      url = `https://${config.ipfsGatewayDomain}/ipfs/${url.slice(7)}`;
     } else {
       url = `https://ipfs.io/ipfs/${url.slice(7)}`;
     }
