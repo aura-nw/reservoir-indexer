@@ -282,7 +282,7 @@ export const upsertCollectionMint = async (collectionMint: CollectionMint) => {
         })
       );
       await mintsRefreshJob.addToQueue(
-        { collection: collectionMint.collection, stage: collectionMint.stage },
+        { collection: collectionMint.collection, stage: collectionMint.stage, forceRefresh: true },
         collectionMint.startTime! - now()
       );
     }
@@ -412,7 +412,7 @@ export const upsertCollectionMint = async (collectionMint: CollectionMint) => {
         })
       );
       await mintsRefreshJob.addToQueue(
-        { collection: collectionMint.collection, stage: collectionMint.stage },
+        { collection: collectionMint.collection, stage: collectionMint.stage, forceRefresh: true },
         collectionMint.startTime! - now()
       );
     }
