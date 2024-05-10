@@ -636,7 +636,7 @@ export class OnchainMetadataProvider extends AbstractBaseMetadataProvider {
   parseIPFSURI(uri: string) {
     if (uri && uri?.includes("ipfs://")) {
       if (config.ipfsGatewayDomain) {
-        uri = uri.replace("ipfs://", `http://${config.ipfsGatewayDomain}:8080/ipfs/`);
+        uri = uri.replace("ipfs://", `https://${config.ipfsGatewayDomain}:8080/ipfs/`);
       } else {
         uri = uri.replace("ipfs://", "https://ipfs.io/ipfs/");
       }
