@@ -4,6 +4,7 @@
 import { logger } from "@/common/logger";
 import { CollectionMetadata, TokenMetadata } from "@/metadata/types";
 import axios from "axios";
+import { config } from "@/config/index";
 
 function getProjectID(tokenId: number) {
   const tokenStr = tokenId.toString();
@@ -85,7 +86,9 @@ export const extend = async (metadata: TokenMetadata) => {
   let metadataURL = projectDetails.metadata;
 
   if (metadataURL.startsWith("ipfs://")) {
-    metadataURL = metadataURL.replace("ipfs://", "https://ipfs.io/ipfs/") + "/" + metadata.tokenId;
+    const ipfsGatewayDomain = config.ipfsGatewayDomain || "ipfs.io";
+    metadataURL =
+      metadataURL.replace("ipfs://", `https://${ipfsGatewayDomain}/ipfs/`) + "/" + metadata.tokenId;
   } else {
     metadataURL = metadataURL + "/" + metadata.tokenId;
   }
