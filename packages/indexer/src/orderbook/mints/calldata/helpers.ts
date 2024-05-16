@@ -134,12 +134,16 @@ export const getAmountMinted = async (
             AND nft_transfer_events.is_deleted = 0
             AND nft_transfer_events."from" = $/from/
             AND nft_transfer_events."to" = $/to/
+            ${collectionMint.startTime ? `AND nft_transfer_events.timestamp >= $/timestamp/` : ""}
         `,
         {
           contract: toBuffer(collectionMint.contract),
           tokenId: collectionMint.tokenId,
           from: toBuffer(AddressZero),
           to: toBuffer(user),
+          // count NFTs minted within the phase, the condition of comparing less than end time is unnessesary
+          // because this function is used to verify mintability in the currently ongoing phase only
+          timestamp: collectionMint.startTime,
         }
       )
       .then((r) => r.amount_minted);
@@ -154,11 +158,15 @@ export const getAmountMinted = async (
             AND nft_transfer_events.is_deleted = 0
             AND nft_transfer_events."from" = $/from/
             AND nft_transfer_events."to" = $/to/
+            ${collectionMint.startTime ? `AND nft_transfer_events.timestamp >= $/timestamp/` : ""}
         `,
         {
           contract: toBuffer(collectionMint.contract),
           from: toBuffer(AddressZero),
           to: toBuffer(user),
+          // count NFTs minted within the phase, the condition of comparing less than end time is unnessesary
+          // because this function is used to verify mintability in the currently ongoing phase only
+          timestamp: collectionMint.startTime,
         }
       )
       .then((r) => r.amount_minted);
