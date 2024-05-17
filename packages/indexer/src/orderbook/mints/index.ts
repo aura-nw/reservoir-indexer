@@ -9,8 +9,9 @@ import {
   getAmountMinted,
   getCurrentSupply,
   getMaxMintableAmount,
+  getStatus,
 } from "@/orderbook/mints/calldata/helpers";
-import { simulateCollectionMint } from "@/orderbook/mints/simulation";
+// import { simulateCollectionMint } from "@/orderbook/mints/simulation";
 
 export type CollectionMintKind = "public" | "allowlist";
 export type CollectionMintStatus = "open" | "closed";
@@ -444,8 +445,10 @@ export const upsertCollectionMint = async (collectionMint: CollectionMint) => {
 };
 
 export const simulateAndUpsertCollectionMint = async (collectionMint: CollectionMint) => {
-  const simulationResult = await simulateCollectionMint(collectionMint);
-  collectionMint.status = simulationResult ? "open" : "closed";
+  // TODO simulate instead of skipping it
+  // const simulationResult = await simulateCollectionMint(collectionMint);
+  // collectionMint.status = simulationResult ? "open" : "closed";
+  collectionMint.status = await getStatus(collectionMint).then((r) => r.status);
 
   return upsertCollectionMint(collectionMint);
 };
