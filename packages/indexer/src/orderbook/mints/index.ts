@@ -55,6 +55,7 @@ export type CollectionMint = {
   // - `price`: every quantity that is minted has the same price (also, any quantity is mintable)
   // - `pricePerQuantity`: different quantities have different prices (also, only specific quantites are mintable)
   price?: string;
+  priceWithoutFee?: string;
   pricePerQuantity?: PricePerQuantity[];
   tokenId?: string;
   maxMintsPerWallet?: string;
@@ -124,6 +125,7 @@ export const getCollectionMints = async (
         details: r.details,
         currency: fromBuffer(r.currency),
         price: r.price ?? undefined,
+        priceWithoutFee: r.price_without_fee ?? undefined,
         pricePerQuantity: r.price_per_quantity ?? undefined,
         tokenId: r.token_id ?? undefined,
         maxMintsPerWallet: r.max_mints_per_wallet ?? undefined,
@@ -194,6 +196,11 @@ export const upsertCollectionMint = async (collectionMint: CollectionMint) => {
     if (collectionMint.price !== existingCollectionMint.price) {
       updatedFields.push(" price = $/price/");
       updatedParams.price = collectionMint.price;
+    }
+
+    if (collectionMint.priceWithoutFee !== existingCollectionMint.priceWithoutFee) {
+      updatedFields.push(" price_without_fee = $/priceWithoutFee/");
+      updatedParams.priceWithoutFee = collectionMint.priceWithoutFee;
     }
 
     if (collectionMint.tokenId !== existingCollectionMint.tokenId) {
@@ -364,6 +371,7 @@ export const upsertCollectionMint = async (collectionMint: CollectionMint) => {
           details,
           currency,
           price,
+          price_without_fee,
           token_id,
           max_mints_per_wallet,
           max_mints_per_transaction,
@@ -379,6 +387,7 @@ export const upsertCollectionMint = async (collectionMint: CollectionMint) => {
           $/details:json/,
           $/currency/,
           $/price/,
+          $/priceWithoutFee/,
           $/tokenId/,
           $/maxMintsPerWallet/,
           $/maxMintsPerTransaction/,
@@ -396,6 +405,7 @@ export const upsertCollectionMint = async (collectionMint: CollectionMint) => {
         details: collectionMint.details,
         currency: toBuffer(collectionMint.currency),
         price: collectionMint.price ?? null,
+        priceWithoutFee: collectionMint.priceWithoutFee ?? null,
         tokenId: collectionMint.tokenId ?? null,
         maxMintsPerWallet: collectionMint.maxMintsPerWallet ?? null,
         maxMintsPerTransaction: collectionMint.maxMintsPerTransaction ?? null,
