@@ -40,9 +40,9 @@ export class AskCancelledEventHandler extends AskCreatedEventHandler {
           orders.side AS "order_side",
           orders.contract,
           orders.maker AS "from",
-          orders.price AS "pricing_price",
+          e.event_price AS "pricing_price",
           orders.currency AS "pricing_currency",
-          orders.currency_price AS "pricing_currency_price",
+          e.event_order_currency_price AS "pricing_currency_price",
           orders.value AS "pricing_value",
           orders.currency_value AS "pricing_currency_value",
           orders.normalized_value AS "pricing_normalized_value",
@@ -85,7 +85,16 @@ export class AskCancelledEventHandler extends AskCreatedEventHandler {
                         extract(epoch from cancel_events.created_at) AS "event_created_ts"
                     FROM cancel_events WHERE cancel_events.order_id = orders.id
                     LIMIT 1
-                 ) x ON TRUE`;
+                 ) x ON TRUE
+        JOIN LATERAL (
+                    SELECT
+                        order_events.price as "event_price",
+                        order_events.order_currency_price as "event_order_currency_price"
+                    FROM order_events 
+                    WHERE order_events.order_id = orders.id AND kind = 'cancel'
+                    ORDER BY id DESC
+                    LIMIT 1
+                 ) e ON TRUE`;
   }
 
   parseEvent(data: any) {
