@@ -278,12 +278,12 @@ export const upsertCollectionMint = async (collectionMint: CollectionMint) => {
         "mints-debug",
         JSON.stringify({
           collection: collectionMint.collection,
-          delay: collectionMint.startTime! - now() + 30,
+          delay: collectionMint.startTime! - now() + 1,
         })
       );
       await mintsRefreshJob.addToQueue(
-        { collection: collectionMint.collection, stage: collectionMint.stage, forceRefresh: true },
-        collectionMint.startTime! - now()
+        { collection: collectionMint.collection, stage: collectionMint.stage },
+        collectionMint.startTime! - now() + 1
       );
     }
 
@@ -408,12 +408,12 @@ export const upsertCollectionMint = async (collectionMint: CollectionMint) => {
         "mints-debug",
         JSON.stringify({
           collection: collectionMint.collection,
-          delay: collectionMint.startTime! - now() + 30,
+          delay: collectionMint.startTime! - now() + 1,
         })
       );
       await mintsRefreshJob.addToQueue(
-        { collection: collectionMint.collection, stage: collectionMint.stage, forceRefresh: true },
-        collectionMint.startTime! - now()
+        { collection: collectionMint.collection, stage: collectionMint.stage },
+        collectionMint.startTime! - now() + 1
       );
     }
 
