@@ -159,7 +159,7 @@ export enum Network {
   EvmosTestnet = 9000,
   AuraTestnet = 1235,
   AuraSerenity = 1236,
-  AuraEuphoria = 1237,
+  AuraEuphoria = 6321,
   AuraXstasy = 1238,
 }
 
