@@ -7,7 +7,7 @@ export const Exchange: ChainIdToAddress = {
   [Network.EvmosTestnet]: "0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC",
   [Network.AuraTestnet]: "0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC",
   [Network.AuraSerenity]: "0xc3A73d1b9870FEdDb782237aa8AF50167a5016A9",
-  [Network.AuraEuphoria]: "0x33EB929b3D924B593420cAa2407125623E7A438C",
+  [Network.AuraEuphoria]: "0xA371d16fFDF669bB8A5A005D9e3476B41db756b2",
   [Network.AuraXstasy]: "0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC",
 };
 
