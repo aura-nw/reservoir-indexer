@@ -97,6 +97,18 @@ export const handleEvents = async (events: EnhancedEvent[], onChainData: OnChain
           taker,
         });
 
+        onChainData.orderInfos.push({
+          context: `filled-${orderId}-${baseEventParams.txHash}`,
+          id: orderId,
+          trigger: {
+            kind: "sale",
+            txHash: baseEventParams.txHash,
+            txTimestamp: baseEventParams.timestamp,
+            logIndex: baseEventParams.logIndex,
+            batchIndex: baseEventParams.batchIndex,
+            blockHash: baseEventParams.blockHash,
+          },
+        });
         break;
       }
 
