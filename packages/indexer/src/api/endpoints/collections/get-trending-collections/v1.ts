@@ -11,7 +11,8 @@ import { getStartTime, Period } from "@/models/top-selling-collections/top-selli
 import { chunk, flatMap } from "lodash";
 import { redis } from "@/common/redis";
 
-const REDIS_EXPIRATION = 60 * 60 * 48; // 48 hours
+// const REDIS_EXPIRATION = 60 * 60 * 48; // 48 hours
+const REDIS_EXPIRATION = 60 * 2; // 2 mins
 const REDIS_BATCH_SIZE = 100;
 
 import {
@@ -27,7 +28,8 @@ const version = "v1";
 
 export const getTrendingCollectionsV1Options: RouteOptions = {
   cache: {
-    expiresIn: 60 * 1000,
+    // expiresIn: 60 * 1000,
+    expiresIn: 2 * 1000, // 2 mins
     privacy: "public",
   },
   description: "Top Trending Collections",
