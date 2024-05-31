@@ -27,7 +27,8 @@ const version = "v1";
 
 export const getTrendingMintsV1Options: RouteOptions = {
   cache: {
-    expiresIn: 60 * 1000,
+    // expiresIn: 60 * 1000,
+    expiresIn: 2 * 1000,
     privacy: "public",
   },
   description: "Top Trending Mints",
