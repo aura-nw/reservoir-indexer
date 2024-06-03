@@ -15,9 +15,16 @@ import {
   getCollectionMints,
   simulateAndUpsertCollectionMint,
 } from "@/orderbook/mints";
-import { AllowlistItem, allowlistExists, createAllowlist } from "@/orderbook/mints/allowlists";
+import {
+  AllowlistItem,
+  allowlistExists,
+  createAllowlist,
+  getProofs,
+  ProofValue,
+} from "@/orderbook/mints/allowlists";
 import { getStatus, toSafeNumber, toSafeTimestamp } from "@/orderbook/mints/calldata/helpers";
 import { getContractKind } from "@/orderbook/orders/common/helpers";
+import _ from "lodash";
 
 const STANDARD = "zora";
 
@@ -662,13 +669,6 @@ export const refreshByCollection = async (collection: string) => {
   }
 };
 
-type ProofValue = {
-  proof: string[];
-  user: string;
-  price: string;
-  maxCanMint: number;
-};
-
 export const generateProofValue = async (
   collectionMint: CollectionMint,
   address: string
@@ -678,13 +678,23 @@ export const generateProofValue = async (
   let result: ProofValue = await redis
     .get(cacheKey)
     .then((response) => (response ? JSON.parse(response) : undefined));
+
   if (!result) {
-    result = await axios
-      .get(`https://allowlist.zora.co/allowed?user=${address}&root=${collectionMint.allowlistId}`)
-      .then(({ data }: { data: ProofValue[] }) => {
-        data[0].proof = data[0].proof.map((item) => `0x${item}`);
-        return data[0];
-      });
+    result = await getProofs(collectionMint.allowlistId, address);
+
+    if (!result || _.isEmpty(result.proof)) {
+      logger.warn(
+        "mint-detector",
+        `Get proof value from zora API, merkle root: ${collectionMint.allowlistId}`
+      );
+
+      result = await axios
+        .get(`https://allowlist.zora.co/allowed?user=${address}&root=${collectionMint.allowlistId}`)
+        .then(({ data }: { data: ProofValue[] }) => {
+          data[0].proof = data[0].proof.map((item) => `0x${item}`);
+          return data[0];
+        });
+    }
 
     if (result) {
       await redis.set(cacheKey, JSON.stringify(result), "EX", 3600);

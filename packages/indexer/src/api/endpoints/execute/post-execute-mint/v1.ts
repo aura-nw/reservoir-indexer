@@ -539,7 +539,9 @@ export const postExecuteMintV1Options: RouteOptions = {
                   }
 
                   item.quantity -= quantityToMint;
-                } catch {
+                  // eslint-disable-next-line
+                } catch (error: any) {
+                  logger.warn(`post-execute-mint-${version}-handler`, error);
                   // Skip errors
                   // Mostly coming from allowlist mints for which the user is not authorized
                   // TODO: Have an allowlist check instead of handling it via `try` / `catch`
