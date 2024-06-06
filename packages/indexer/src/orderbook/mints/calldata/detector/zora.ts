@@ -15,9 +15,16 @@ import {
   getCollectionMints,
   simulateAndUpsertCollectionMint,
 } from "@/orderbook/mints";
-import { AllowlistItem, allowlistExists, createAllowlist } from "@/orderbook/mints/allowlists";
+import {
+  AllowlistItem,
+  allowlistExists,
+  createAllowlist,
+  getProofs,
+  ProofValue,
+} from "@/orderbook/mints/allowlists";
 import { getStatus, toSafeNumber, toSafeTimestamp } from "@/orderbook/mints/calldata/helpers";
 import { getContractKind } from "@/orderbook/orders/common/helpers";
+import _ from "lodash";
 
 const STANDARD = "zora";
 
@@ -65,67 +72,71 @@ export const extractByCollectionERC721 = async (collection: string): Promise<Col
     }
 
     // Public sale
-    if (saleDetails.publicSaleActive) {
-      // price = on-chain-price + fee
-      const price = bn(saleDetails.publicSalePrice).add(fee).toString();
+    // if (saleDetails.publicSaleActive) {
+    // price = on-chain-price + fee
+    const price = bn(saleDetails.publicSalePrice).add(fee).toString();
+    const priceWithoutFee = bn(saleDetails.publicSalePrice).toString();
 
-      results.push({
-        collection,
-        contract: collection,
-        stage: "public-sale",
-        kind: "public",
-        status: "open",
-        standard: STANDARD,
-        details: {
-          tx: {
-            to: collection,
-            data:
-              totalRewards == undefined
-                ? {
-                    // `purchase`
-                    signature: "0xefef39a1",
-                    params: [
-                      {
-                        kind: "quantity",
-                        abiType: "uint256",
-                      },
-                    ],
-                  }
-                : {
-                    // `mintWithRewards`
-                    signature: "0x45368181",
-                    params: [
-                      {
-                        kind: "recipient",
-                        abiType: "address",
-                      },
-                      {
-                        kind: "quantity",
-                        abiType: "uint256",
-                      },
-                      {
-                        kind: "comment",
-                        abiType: "string",
-                      },
-                      {
-                        kind: "referrer",
-                        abiType: "address",
-                      },
-                    ],
-                  },
-          },
+    results.push({
+      collection,
+      contract: collection,
+      stage: "public-sale",
+      kind: "public",
+      status: "open",
+      standard: STANDARD,
+      details: {
+        tx: {
+          to: collection,
+          data:
+            totalRewards == undefined
+              ? {
+                  // `purchase`
+                  signature: "0xefef39a1",
+                  params: [
+                    {
+                      kind: "quantity",
+                      abiType: "uint256",
+                    },
+                  ],
+                }
+              : {
+                  // `mintWithRewards`
+                  signature: "0x45368181",
+                  params: [
+                    {
+                      kind: "recipient",
+                      abiType: "address",
+                    },
+                    {
+                      kind: "quantity",
+                      abiType: "uint256",
+                    },
+                    {
+                      kind: "comment",
+                      abiType: "string",
+                    },
+                    {
+                      kind: "referrer",
+                      abiType: "address",
+                    },
+                  ],
+                },
         },
-        currency: Sdk.Common.Addresses.Native[config.chainId],
-        price,
-        maxMintsPerWallet: toSafeNumber(saleDetails.maxSalePurchasePerAddress),
-        maxSupply: toSafeNumber(saleDetails.maxSupply),
-        startTime: toSafeTimestamp(saleDetails.publicSaleStart),
-        endTime: toSafeTimestamp(saleDetails.publicSaleEnd),
-      });
-    }
+      },
+      currency: Sdk.Common.Addresses.Native[config.chainId],
+      price,
+      priceWithoutFee,
+      maxMintsPerWallet: toSafeNumber(saleDetails.maxSalePurchasePerAddress),
+      maxSupply: toSafeNumber(saleDetails.maxSupply),
+      startTime: toSafeTimestamp(saleDetails.publicSaleStart),
+      endTime: toSafeTimestamp(saleDetails.publicSaleEnd),
+    });
+    // }
 
     // Presale
-    if (saleDetails.presaleActive) {
+    // if (saleDetails.presaleActive) {
+    if (saleDetails.presaleMerkleRoot !== 0) {
+      // TODO: define case not specify presale
       const merkleRoot = saleDetails.presaleMerkleRoot;
       if (!(await allowlistExists(merkleRoot))) {
         await axios
@@ -658,13 +669,6 @@ export const refreshByCollection = async (collection: string) => {
   }
 };
 
-type ProofValue = {
-  proof: string[];
-  user: string;
-  price: string;
-  maxCanMint: number;
-};
-
 export const generateProofValue = async (
   collectionMint: CollectionMint,
   address: string
@@ -674,13 +678,23 @@ export const generateProofValue = async (
   let result: ProofValue = await redis
     .get(cacheKey)
     .then((response) => (response ? JSON.parse(response) : undefined));
+
   if (!result) {
-    result = await axios
-      .get(`https://allowlist.zora.co/allowed?user=${address}&root=${collectionMint.allowlistId}`)
-      .then(({ data }: { data: ProofValue[] }) => {
-        data[0].proof = data[0].proof.map((item) => `0x${item}`);
-        return data[0];
-      });
+    result = await getProofs(collectionMint.allowlistId, address);
+
+    if (!result || _.isEmpty(result.proof)) {
+      logger.warn(
+        "mint-detector",
+        `Get proof value from zora API, merkle root: ${collectionMint.allowlistId}`
+      );
+
+      result = await axios
+        .get(`https://allowlist.zora.co/allowed?user=${address}&root=${collectionMint.allowlistId}`)
+        .then(({ data }: { data: ProofValue[] }) => {
+          data[0].proof = data[0].proof.map((item) => `0x${item}`);
+          return data[0];
+        });
+    }
 
     if (result) {
       await redis.set(cacheKey, JSON.stringify(result), "EX", 3600);

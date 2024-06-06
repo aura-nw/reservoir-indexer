@@ -20,7 +20,8 @@ export const offChainCheck = async (
   const cancelResult = await redb.oneOrNone(
     `
       SELECT
-        cancel_events.timestamp
+        cancel_events.timestamp,
+        cancel_events.log_index
       FROM cancel_events
       WHERE cancel_events.order_id = $/orderId/
       ORDER BY cancel_events.timestamp DESC
@@ -43,7 +44,11 @@ export const offChainCheck = async (
   );
 
   // For now, it doesn't matter whether we return "cancelled" or "filled"
-  if (cancelResult && cancelResult.timestamp >= order.txTimestamp) {
+  if (
+    cancelResult &&
+    cancelResult.timestamp >= order.txTimestamp &&
+    cancelResult.log_index >= order.logIndex
+  ) {
     throw new Error("cancelled");
   }
   if (fillResult && fillResult.timestamp >= order.txTimestamp) {

@@ -27,7 +27,8 @@ const version = "v1";
 
 export const getTrendingMintsV1Options: RouteOptions = {
   cache: {
-    expiresIn: 60 * 1000,
+    // expiresIn: 60 * 1000,
+    expiresIn: 2 * 1000,
     privacy: "public",
   },
   description: "Top Trending Mints",
@@ -41,7 +42,7 @@ export const getTrendingMintsV1Options: RouteOptions = {
   validate: {
     query: Joi.object({
       period: Joi.string()
-        .valid("5m", "10m", "30m", "1h", "2h", "6h", "24h")
+        .valid("5m", "10m", "30m", "1h", "2h", "6h", "24h", "1d", "7d", "30d")
         .default("24h")
         .description("Time window to aggregate."),
       type: Joi.string()

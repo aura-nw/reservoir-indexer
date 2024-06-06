@@ -8,6 +8,14 @@ export type AllowlistItem = {
   price?: string;
   // Actual price (which includes fees)
   actualPrice?: string;
+  proofs?: string[];
+};
+
+export type ProofValue = {
+  proof: string[];
+  user: string;
+  price: string;
+  maxCanMint: number;
 };
 
 export const createAllowlist = async (id: string, allowlist: AllowlistItem[]) => {
@@ -111,4 +119,37 @@ export const allowlistExists = async (id: string) => {
     { id }
   );
   return Boolean(result);
+};
+
+export const getProofs = async (
+  allowlistId: string | undefined,
+  userAddress: string
+): Promise<ProofValue> => {
+  return idb
+    .oneOrNone(
+      `
+      SELECT
+        allowlists_items.max_mints,
+        allowlists_items.price,
+        allowlists_items.proofs
+      FROM
+        allowlists_items
+      WHERE
+        allowlists_items.allowlist_id = $/allowlists_id/
+        AND allowlists_items.address = $/address/
+    `,
+      {
+        allowlists_id: allowlistId,
+        address: toBuffer(userAddress),
+      }
+    )
+    .then(
+      (result) =>
+        ({
+          proof: result.proofs || [],
+          user: userAddress,
+          price: result.price ?? undefined,
+          maxCanMint: result.max_mints ?? undefined,
+        } as ProofValue)
+    );
 };

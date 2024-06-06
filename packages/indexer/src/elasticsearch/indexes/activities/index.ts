@@ -750,23 +750,22 @@ export const getTopSellingCollectionsV2 = async (params: {
         },
       ],
 
-      // TODO filterout wash trading from collection top trend
-      // must_not: [
-      //   {
-      //     term: {
-      //       "event.washTradingScore": 1,
-      //     },
-      //   },
-      //   ...(excludedCollections.length > 0
-      //     ? [
-      //         {
-      //           terms: {
-      //             "collection.id": excludedCollections,
-      //           },
-      //         },
-      //       ]
-      //     : []),
-      // ],
+      must_not: [
+        {
+          term: {
+            "event.washTradingScore": 1,
+          },
+        },
+        ...(excludedCollections.length > 0
+          ? [
+              {
+                terms: {
+                  "collection.id": excludedCollections,
+                },
+              },
+            ]
+          : []),
+      ],
     },
   } as any;
 

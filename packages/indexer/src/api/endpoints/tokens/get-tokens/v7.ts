@@ -1191,9 +1191,9 @@ export const getTokensV7Options: RouteOptions = {
         conditions.push(`${sortColumn} is null`);
       }
 
-      if (query.sortBy === "floorAskPrice" && query.sortDirection === "desc") {
-        conditions.push(`t.floor_sell_value is not null`);
-      }
+      // if (query.sortBy === "floorAskPrice" && query.sortDirection === "desc") {
+      //   conditions.push(`t.floor_sell_value is not null`);
+      // }
 
       if (conditions.length) {
         baseQuery += " WHERE " + conditions.map((c) => `(${c})`).join(" AND ");
@@ -1229,9 +1229,10 @@ export const getTokensV7Options: RouteOptions = {
                 ? `${union ? "floor_sell_value" : "t.normalized_floor_sell_value"}`
                 : `${union ? "" : "t."}floor_sell_value`;
 
-            return ` ORDER BY ${sortColumn} ${sortDirection} NULLS ${
-              sortDirection === "asc" ? "LAST" : "FIRST"
-            }, ${contractSort ? `t_contract ${sortDirection}, ` : ""}t_token_id ${sortDirection}`;
+            // return ` ORDER BY ${sortColumn} ${sortDirection} NULLS ${
+            //   sortDirection === "asc" ? "LAST" : "FIRST"
+            return ` ORDER BY ${sortColumn} ${sortDirection} NULLS LAST
+            , ${contractSort ? `t_contract ${sortDirection}, ` : ""}t_token_id ${sortDirection}`;
           }
         }
       };
