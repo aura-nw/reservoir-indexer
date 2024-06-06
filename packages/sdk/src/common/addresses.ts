@@ -75,7 +75,7 @@ export const WNative: ChainIdToAddress = {
   [Network.AuraTestnet]: "0xE9cF9154212D862264E794b72B8aB4568Bb50813",
   [Network.AuraSerenity]: "0x5Db8A2543e7e3Add18389C5ED63757A46A4848C1",
   [Network.AuraEuphoria]: "0x9A1945e4A316708631332BF7EC4fA8A2f6C6E2f8",
-  [Network.AuraXstasy]: "0xE9cF9154212D862264E794b72B8aB4568Bb50813",
+  [Network.AuraXstasy]: "0x6C149E3f8b04cc20888464938b9Ee005d43271F8",
 };
 
 export const Usdc: ChainIdToAddressList = {
@@ -149,7 +149,7 @@ export const RoyaltyEngine: ChainIdToAddress = {
   [Network.AuraTestnet]: "0x135803cA38824Cc8A40aCC67Ea1Bd3D5E6A23082",
   [Network.AuraSerenity]: "0x8E4B6D854cB9acaD86435D1E396017e1dAb3220A",
   [Network.AuraEuphoria]: "0xD388d812c1cE2CE7C46D797684BA912De65CD414",
-  [Network.AuraXstasy]: "0x135803cA38824Cc8A40aCC67Ea1Bd3D5E6A23082",
+  [Network.AuraXstasy]: "0x62435914C478C5f511A1fEBBFAF092CaFB4C2e16",
 };
 
 // Uniswap's `SwapRouter02`

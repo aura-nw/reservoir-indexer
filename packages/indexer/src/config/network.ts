@@ -1924,7 +1924,7 @@ export const getNetworkSettings = (): NetworkSettings => {
         lastBlockLatency: 5,
       };
     }
-    case 1238: {
+    case 6322: {
       return {
         ...defaultNetworkSettings,
         isTestnet: false,

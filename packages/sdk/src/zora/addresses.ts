@@ -8,7 +8,7 @@ export const Exchange: ChainIdToAddress = {
   [Network.AuraTestnet]: "0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC",
   [Network.AuraSerenity]: "0xc3A73d1b9870FEdDb782237aa8AF50167a5016A9",
   [Network.AuraEuphoria]: "0x33EB929b3D924B593420cAa2407125623E7A438C",
-  [Network.AuraXstasy]: "0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC",
+  [Network.AuraXstasy]: "0xc4Aa652A09f27184A98A37a6b35b7b3C91f6f830",
 };
 
 export const AuctionHouse: ChainIdToAddress = {
@@ -23,7 +23,7 @@ export const ModuleManager: ChainIdToAddress = {
   [Network.AuraTestnet]: "0x6779178Ba139A61890A0B05a15045dF2ED0ae2dd",
   [Network.AuraSerenity]: "0x072e1b72e39aa018de54091CF6625dBDf227b3B4",
   [Network.AuraEuphoria]: "0xcdDe41b8F12182F7D25d1A2f35ADdA971Aa58FcA",
-  [Network.AuraXstasy]: "0x6779178Ba139A61890A0B05a15045dF2ED0ae2dd",
+  [Network.AuraXstasy]: "0x6FD4720cBe77f0c7bbE8263938f38e77D9efEE6A",
 };
 
 export const Erc721TransferHelper: ChainIdToAddress = {
@@ -34,7 +34,7 @@ export const Erc721TransferHelper: ChainIdToAddress = {
   [Network.AuraTestnet]: "0x7a56178610624943aeDF11Ce7b7C9d991aFBCc36",
   [Network.AuraSerenity]: "0x6944F3183F54757a8deaC2aEb9d4D3d64cb985f1",
   [Network.AuraEuphoria]: "0x364Fe4DcB58363fa1a298207B5Ed54F875835aBf",
-  [Network.AuraXstasy]: "0x7a56178610624943aeDF11Ce7b7C9d991aFBCc36",
+  [Network.AuraXstasy]: "0xD43f62921bE6d42fe87a0336841431cfFd57F0Eb",
 };
 
 export const Erc20TransferHelper: ChainIdToAddress = {
@@ -45,7 +45,7 @@ export const Erc20TransferHelper: ChainIdToAddress = {
   [Network.AuraTestnet]: "0xE30E6Fb2c7f2A24a770cfa7E2c31a989D24AC616",
   [Network.AuraSerenity]: "0x71B65250BF5ED67321D318A3a7dB46c7616fa154",
   [Network.AuraEuphoria]: "0xBB1dEE78eF86cdBe3ea92cA4ab60D3895d875d0f",
-  [Network.AuraXstasy]: "0xE30E6Fb2c7f2A24a770cfa7E2c31a989D24AC616",
+  [Network.AuraXstasy]: "0xbF3B5f77aBE83eE878cA0205a8b9A59d2AF256F7",
 };
 
 export const ERC1155Factory: ChainIdToAddress = {
