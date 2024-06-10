@@ -5,8 +5,13 @@ import { logger } from "@/common/logger";
 import { bn, fromBuffer, now, toBuffer } from "@/common/utils";
 import { mintsRefreshJob } from "@/jobs/mints/mints-refresh-job";
 import { MintTxSchema, CustomInfo } from "@/orderbook/mints/calldata";
-import { getAmountMinted, getCurrentSupply } from "@/orderbook/mints/calldata/helpers";
-import { simulateCollectionMint } from "@/orderbook/mints/simulation";
+import {
+  getAmountMinted,
+  getCurrentSupply,
+  getMaxMintableAmount,
+  getStatus,
+} from "@/orderbook/mints/calldata/helpers";
+// import { simulateCollectionMint } from "@/orderbook/mints/simulation";
 
 export type CollectionMintKind = "public" | "allowlist";
 export type CollectionMintStatus = "open" | "closed";
@@ -51,6 +56,7 @@ export type CollectionMint = {
   // - `price`: every quantity that is minted has the same price (also, any quantity is mintable)
   // - `pricePerQuantity`: different quantities have different prices (also, only specific quantites are mintable)
   price?: string;
+  priceWithoutFee?: string;
   pricePerQuantity?: PricePerQuantity[];
   tokenId?: string;
   maxMintsPerWallet?: string;
@@ -120,6 +126,7 @@ export const getCollectionMints = async (
         details: r.details,
         currency: fromBuffer(r.currency),
         price: r.price ?? undefined,
+        priceWithoutFee: r.price_without_fee ?? undefined,
         pricePerQuantity: r.price_per_quantity ?? undefined,
         tokenId: r.token_id ?? undefined,
         maxMintsPerWallet: r.max_mints_per_wallet ?? undefined,
@@ -190,6 +197,11 @@ export const upsertCollectionMint = async (collectionMint: CollectionMint) => {
     if (collectionMint.price !== existingCollectionMint.price) {
       updatedFields.push(" price = $/price/");
       updatedParams.price = collectionMint.price;
+    }
+
+    if (collectionMint.priceWithoutFee !== existingCollectionMint.priceWithoutFee) {
+      updatedFields.push(" price_without_fee = $/priceWithoutFee/");
+      updatedParams.priceWithoutFee = collectionMint.priceWithoutFee;
     }
 
     if (collectionMint.tokenId !== existingCollectionMint.tokenId) {
@@ -278,12 +290,12 @@ export const upsertCollectionMint = async (collectionMint: CollectionMint) => {
         "mints-debug",
         JSON.stringify({
           collection: collectionMint.collection,
-          delay: collectionMint.startTime! - now() + 30,
+          delay: collectionMint.startTime! - now() + 1,
         })
       );
       await mintsRefreshJob.addToQueue(
-        { collection: collectionMint.collection },
-        collectionMint.startTime! - now()
+        { collection: collectionMint.collection, stage: collectionMint.stage },
+        collectionMint.startTime! - now() + 1
       );
     }
 
@@ -360,6 +372,7 @@ export const upsertCollectionMint = async (collectionMint: CollectionMint) => {
           details,
           currency,
           price,
+          price_without_fee,
           token_id,
           max_mints_per_wallet,
           max_mints_per_transaction,
@@ -375,6 +388,7 @@ export const upsertCollectionMint = async (collectionMint: CollectionMint) => {
           $/details:json/,
           $/currency/,
           $/price/,
+          $/priceWithoutFee/,
           $/tokenId/,
           $/maxMintsPerWallet/,
           $/maxMintsPerTransaction/,
@@ -392,6 +406,7 @@ export const upsertCollectionMint = async (collectionMint: CollectionMint) => {
         details: collectionMint.details,
         currency: toBuffer(collectionMint.currency),
         price: collectionMint.price ?? null,
+        priceWithoutFee: collectionMint.priceWithoutFee ?? null,
         tokenId: collectionMint.tokenId ?? null,
         maxMintsPerWallet: collectionMint.maxMintsPerWallet ?? null,
         maxMintsPerTransaction: collectionMint.maxMintsPerTransaction ?? null,
@@ -408,12 +423,12 @@ export const upsertCollectionMint = async (collectionMint: CollectionMint) => {
         "mints-debug",
         JSON.stringify({
           collection: collectionMint.collection,
-          delay: collectionMint.startTime! - now() + 30,
+          delay: collectionMint.startTime! - now() + 1,
         })
       );
       await mintsRefreshJob.addToQueue(
-        { collection: collectionMint.collection },
-        collectionMint.startTime! - now()
+        { collection: collectionMint.collection, stage: collectionMint.stage },
+        collectionMint.startTime! - now() + 1
       );
     }
 
@@ -430,8 +445,10 @@ export const upsertCollectionMint = async (collectionMint: CollectionMint) => {
 };
 
 export const simulateAndUpsertCollectionMint = async (collectionMint: CollectionMint) => {
-  const simulationResult = await simulateCollectionMint(collectionMint);
-  collectionMint.status = simulationResult ? "open" : "closed";
+  // TODO simulate instead of skipping it
+  // const simulationResult = await simulateCollectionMint(collectionMint);
+  // collectionMint.status = simulationResult ? "open" : "closed";
+  collectionMint.status = await getStatus(collectionMint).then((r) => r.status);
 
   return upsertCollectionMint(collectionMint);
 };
@@ -455,6 +472,18 @@ export const getAmountMintableByWallet = async (
   if (collectionMint.maxMintsPerWallet) {
     const mintedAmount = await getAmountMinted(collectionMint, user);
     const remainingAmount = bn(collectionMint.maxMintsPerWallet).sub(mintedAmount);
+    if (!amountMintable) {
+      amountMintable = remainingAmount;
+    } else {
+      amountMintable = remainingAmount.lt(amountMintable) ? remainingAmount : amountMintable;
+    }
+  }
+
+  // Handle remaining supply for zora presale mint stage
+  if (collectionMint.allowlistId) {
+    const mintedAmount = await getAmountMinted(collectionMint, user);
+    const maxMintableAmount = await getMaxMintableAmount(collectionMint.allowlistId, user);
+    const remainingAmount = maxMintableAmount.sub(mintedAmount);
     if (!amountMintable) {
       amountMintable = remainingAmount;
     } else {

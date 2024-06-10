@@ -171,8 +171,8 @@ export const getUserActivityV6Options: RouteOptions = {
             isNsfw: Joi.boolean().default(false),
           }),
           txHash: Joi.string()
-            .lowercase()
-            .pattern(regex.bytes32)
+            // .lowercase()
+            // .pattern(regex.bytes32)
             .allow(null)
             .description("Txn hash from the blockchain."),
           logIndex: Joi.number().allow(null),

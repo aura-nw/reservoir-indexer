@@ -51,7 +51,7 @@ export const toSafeNumber = (value?: BigNumberish) => {
 export const fetchMetadata = async (url: string) => {
   if (url.startsWith("ipfs://")) {
     if (config.ipfsGatewayDomain) {
-      url = `http://${config.ipfsGatewayDomain}:8080/ipfs/${url.slice(7)}`;
+      url = `https://${config.ipfsGatewayDomain}/ipfs/${url.slice(7)}`;
     } else {
       url = `https://ipfs.io/ipfs/${url.slice(7)}`;
     }
@@ -134,12 +134,16 @@ export const getAmountMinted = async (
             AND nft_transfer_events.is_deleted = 0
             AND nft_transfer_events."from" = $/from/
             AND nft_transfer_events."to" = $/to/
+            ${collectionMint.startTime ? `AND nft_transfer_events.timestamp >= $/timestamp/` : ""}
         `,
         {
           contract: toBuffer(collectionMint.contract),
           tokenId: collectionMint.tokenId,
           from: toBuffer(AddressZero),
           to: toBuffer(user),
+          // count NFTs minted within the phase, the condition of comparing less than end time is unnessesary
+          // because this function is used to verify mintability in the currently ongoing phase only
+          timestamp: collectionMint.startTime,
         }
       )
       .then((r) => r.amount_minted);
@@ -154,17 +158,43 @@ export const getAmountMinted = async (
             AND nft_transfer_events.is_deleted = 0
             AND nft_transfer_events."from" = $/from/
             AND nft_transfer_events."to" = $/to/
+            ${collectionMint.startTime ? `AND nft_transfer_events.timestamp >= $/timestamp/` : ""}
         `,
         {
           contract: toBuffer(collectionMint.contract),
           from: toBuffer(AddressZero),
           to: toBuffer(user),
+          // count NFTs minted within the phase, the condition of comparing less than end time is unnessesary
+          // because this function is used to verify mintability in the currently ongoing phase only
+          timestamp: collectionMint.startTime,
         }
       )
       .then((r) => r.amount_minted);
   }
 
   return bn(amountMinted);
+};
+
+export const getMaxMintableAmount = async (
+  allowlistId: string,
+  user: string
+): Promise<BigNumber> => {
+  const maxMintableAmount = await idb
+    .one(
+      `
+    SELECT max_mints
+    FROM allowlists_items
+    WHERE allowlists_items.allowlist_id = $/allowlist_id/
+      AND allowlists_items.address = $/address/
+  `,
+      {
+        allowlist_id: allowlistId,
+        address: toBuffer(user),
+      }
+    )
+    .then((r) => r.max_mints);
+
+  return bn(maxMintableAmount);
 };
 
 export const getCurrentSupply = async (collectionMint: CollectionMint): Promise<BigNumber> => {

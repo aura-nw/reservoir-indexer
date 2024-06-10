@@ -108,7 +108,7 @@ export const getNetworkName = () => {
     case 1236:
       return "aura-serenity";
 
-    case 1237:
+    case 6321:
       return "aura-euphoria";
 
     case 1238:
@@ -1914,7 +1914,7 @@ export const getNetworkSettings = (): NetworkSettings => {
         lastBlockLatency: 5,
       };
     }
-    case 1237: {
+    case 6321: {
       return {
         ...defaultNetworkSettings,
         isTestnet: false,
@@ -1924,7 +1924,7 @@ export const getNetworkSettings = (): NetworkSettings => {
         lastBlockLatency: 5,
       };
     }
-    case 1238: {
+    case 6322: {
       return {
         ...defaultNetworkSettings,
         isTestnet: false,
