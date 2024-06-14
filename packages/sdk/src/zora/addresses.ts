@@ -8,7 +8,7 @@ export const Exchange: ChainIdToAddress = {
   [Network.AuraTestnet]: "0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC",
   [Network.AuraSerenity]: "0xc3A73d1b9870FEdDb782237aa8AF50167a5016A9",
   [Network.AuraEuphoria]: "0xA371d16fFDF669bB8A5A005D9e3476B41db756b2",
-  [Network.AuraXstasy]: "0xc4Aa652A09f27184A98A37a6b35b7b3C91f6f830",
+  [Network.AuraXstasy]: "0xFfC170cF1F6cDF421877793d1b8A9a13ead49e0e",
 };
 
 export const AuctionHouse: ChainIdToAddress = {

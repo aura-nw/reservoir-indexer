@@ -75,7 +75,7 @@ export const WNative: ChainIdToAddress = {
   [Network.AuraTestnet]: "0xE9cF9154212D862264E794b72B8aB4568Bb50813",
   [Network.AuraSerenity]: "0x5Db8A2543e7e3Add18389C5ED63757A46A4848C1",
   [Network.AuraEuphoria]: "0x9A1945e4A316708631332BF7EC4fA8A2f6C6E2f8",
-  [Network.AuraXstasy]: "0x6C149E3f8b04cc20888464938b9Ee005d43271F8",
+  [Network.AuraXstasy]: "0xDE47A655a5d9904BD3F7e1A536D8323fBD99993A",
 };
 
 export const Usdc: ChainIdToAddressList = {
