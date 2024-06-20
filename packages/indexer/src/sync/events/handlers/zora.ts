@@ -31,8 +31,8 @@ const getOfferParams = (args: Result) => {
   const tokenContract = args["tokenContract"].toLowerCase();
   const tokenId = args["tokenId"].toString();
   const offer = args["offer"];
-  const offerCurrency = offer["currency"].toLowerCase();
-  const offerAmount = offer["amount"].toString();
+  const askCurrency = offer["currency"].toLowerCase();
+  const askPrice = offer["amount"].toString();
   const expiry =
     offer["expiry"].gt(0) && offer["expiry"].lt(PRACTICAL_TIMESTAMP_UPPER_BOUND)
       ? offer["expiry"].toString()
@@ -40,12 +40,14 @@ const getOfferParams = (args: Result) => {
   const findersFeeBps = offer["findersFeeBps"];
   const listingFeeBps = offer["listingFeeBps"];
   const listingFeeRecipient = offer["listingFeeRecipient"].toLowerCase();
+  const offerId = args["id"].toString();
 
   return {
     tokenContract,
     tokenId,
-    askCurrency: offerCurrency,
-    askPrice: offerAmount,
+    offerId,
+    askCurrency,
+    askPrice,
     expiry,
     findersFeeBps,
     listingFeeBps,
