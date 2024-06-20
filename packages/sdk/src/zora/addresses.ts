@@ -59,3 +59,10 @@ export const ERC1155FactoryV2: ChainIdToAddress = {
   [Network.Optimism]: "0x777777c338d93e2c7adf08d102d45ca7cc4ed021",
   [Network.Zora]: "0x777777c338d93e2c7adf08d102d45ca7cc4ed021",
 };
+
+export const OfferOmnibus: ChainIdToAddress = {
+  [Network.AuraTestnet]: "0x14511dEfE1fbc147b7364d3A5A3ED1179bd0c707",
+  // [Network.AuraSerenity]: "0xc3A73d1b9870FEdDb782237aa8AF50167a5016A9",
+  // [Network.AuraEuphoria]: "0xA371d16fFDF669bB8A5A005D9e3476B41db756b2",
+  // [Network.AuraXstasy]: "0xc4Aa652A09f27184A98A37a6b35b7b3C91f6f830",
+};
