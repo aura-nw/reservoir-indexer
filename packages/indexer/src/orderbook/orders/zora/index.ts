@@ -159,6 +159,11 @@ export const save = async (orderInfos: OrderInfo[]): Promise<SaveResult[]> => {
         }
       }
 
+      const validFrom = `date_trunc('seconds', to_timestamp(${orderParams.txTimestamp}))`;
+      const validTo = orderParams.expiry
+        ? `date_trunc('seconds', to_timestamp(${orderParams.expiry}))`
+        : `'Infinity'`;
+
       if (orderResult) {
         // Decide whether the current trigger is the latest one
         let isLatestTrigger: boolean;
@@ -184,10 +189,8 @@ export const save = async (orderInfos: OrderInfo[]): Promise<SaveResult[]> => {
                 currency_price = $/price/,
                 value = $/price/,
                 currency_value = $/price/,
-                valid_between = tstzrange(date_trunc('seconds', to_timestamp(${
-                  orderParams.txTimestamp
-                })), 'Infinity', '[]'),
-                expiration = 'Infinity',
+                valid_between = tstzrange(${validFrom}, ${validTo}, '[]'),
+                expiration = ${validTo},
                 ${fillabilityStatus == "fillable" ? "originated_at = now()," : ""}
                 updated_at = now(),
                 taker = $/taker/,
@@ -246,11 +249,6 @@ export const save = async (orderInfos: OrderInfo[]): Promise<SaveResult[]> => {
       if (metadata.source) {
         source = await sources.getOrInsert(metadata.source);
       }
-
-      const validFrom = `date_trunc('seconds', to_timestamp(${orderParams.txTimestamp}))`;
-      const validTo = orderParams.expiry
-        ? `date_trunc('seconds', to_timestamp(${orderParams.expiry}))`
-        : `'Infinity'`;
 
       orderValues.push({
         id,
