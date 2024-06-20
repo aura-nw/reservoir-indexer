@@ -17,21 +17,26 @@ import {
 } from "@/jobs/order-updates/order-updates-by-id-job";
 
 export type OrderIdParams = {
-  tokenContract: string;
-  tokenId: string;
+  tokenContract?: string;
+  tokenId?: string;
+  offerId?: string;
 };
 
 export type OrderInfo = {
   orderParams: {
     // SDK parameters
-    seller: string;
+    seller?: string;
     maker: string;
     tokenContract: string;
     tokenId: string;
+    offerId?: string;
     askPrice: string;
     askCurrency: string;
-    sellerFundsRecipient: string;
+    expiry?: number;
+    sellerFundsRecipient?: string;
     findersFeeBps: number;
+    listingFeeBps?: number;
+    listingFeeRecipient?: number;
     side: "sell" | "buy";
     // Validation parameters (for ensuring only the latest event is relevant)
     txHash: string;
@@ -46,7 +51,13 @@ export type OrderInfo = {
 export function getOrderId(orderParams: OrderIdParams) {
   const orderId = keccak256(
     ["string", "string", "uint256"],
-    ["zora-v3", orderParams.tokenContract, orderParams.tokenId]
+    orderParams.offerId
+      ? [
+          "zora-v3",
+          Sdk.Zora.Addresses.OfferOmnibus[config.chainId].toLowerCase(),
+          orderParams.offerId,
+        ]
+      : ["zora-v3", orderParams.tokenContract, orderParams.tokenId]
   );
   return orderId;
 }
@@ -237,7 +248,9 @@ export const save = async (orderInfos: OrderInfo[]): Promise<SaveResult[]> => {
       }
 
       const validFrom = `date_trunc('seconds', to_timestamp(${orderParams.txTimestamp}))`;
-      const validTo = `'Infinity'`;
+      const validTo = orderParams.expiry
+        ? `date_trunc('seconds', to_timestamp(${orderParams.expiry}))`
+        : `'Infinity'`;
 
       orderValues.push({
         id,
