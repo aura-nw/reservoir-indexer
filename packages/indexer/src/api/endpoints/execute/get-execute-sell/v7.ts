@@ -475,8 +475,12 @@ export const getExecuteSellV7Options: RouteOptions = {
           );
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
-          // Remove the last path item
-          path = path.slice(0, -1);
+          // just for keeping this API not fail due to path.lenght = 0 for front end usage
+          // TODO re-check the correctness of this logic
+          if (path.length > 1) {
+            // Remove the last path item
+            path = path.slice(0, -1);
+          }
 
           if (!payload.partial) {
             throw getExecuteError(error.message ?? "Could not generate calldata");
