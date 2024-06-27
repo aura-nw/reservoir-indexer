@@ -73,7 +73,7 @@ export const WNative: ChainIdToAddress = {
   [Network.ApexTestnet]: "0xf470ba53f14B1073cC16839c0f80474105d159a5",
   [Network.EvmosTestnet]: "0xE9cF9154212D862264E794b72B8aB4568Bb50813",
   [Network.AuraTestnet]: "0x7C258D32e0C5ADda30d18194870b56A38E2EBBbC",
-  [Network.AuraSerenity]: "0x5Db8A2543e7e3Add18389C5ED63757A46A4848C1",
+  [Network.AuraSerenity]: "0xE974cC14c93FC6077B0d65F98832B846C5454A0B",
   [Network.AuraEuphoria]: "0x9A1945e4A316708631332BF7EC4fA8A2f6C6E2f8",
   [Network.AuraXstasy]: "0x6C149E3f8b04cc20888464938b9Ee005d43271F8",
 };
@@ -147,7 +147,7 @@ export const RoyaltyEngine: ChainIdToAddress = {
   [Network.Scroll]: "0xc055b6d9fd8146bc76fcd6f944c8669d5279ed95",
   [Network.EvmosTestnet]: "0x135803cA38824Cc8A40aCC67Ea1Bd3D5E6A23082",
   [Network.AuraTestnet]: "0xA1b5001fbda9179CBe69DfBEED78be1EC900d523",
-  [Network.AuraSerenity]: "0x8E4B6D854cB9acaD86435D1E396017e1dAb3220A",
+  [Network.AuraSerenity]: "0x297afC4971CD9b6A392c580542399e7B096EEBfd",
   [Network.AuraEuphoria]: "0xD388d812c1cE2CE7C46D797684BA912De65CD414",
   [Network.AuraXstasy]: "0x62435914C478C5f511A1fEBBFAF092CaFB4C2e16",
 };
