@@ -96,44 +96,46 @@ export const save = async (orderInfos: OrderInfo[]): Promise<SaveResult[]> => {
       );
 
       // Check: sell order has Eth as payment token
-      if (orderParams.askCurrency !== Sdk.Common.Addresses.Native[config.chainId]) {
-        if (!orderResult) {
-          return results.push({
-            id,
-            status: "unsupported-payment-token",
-          });
-        } else {
-          // If the order already exists set its fillability status as cancelled
-          // See https://github.com/reservoirprotocol/indexer/pull/1903/files#r976148340
-          await idb.none(
-            `
-              UPDATE orders SET
-                fillability_status = $/fillabilityStatus/,
-                expiration = to_timestamp(${orderParams.txTimestamp}),
-                updated_at = now(),
-                block_number = $/blockNumber/,
-                log_index = $/logIndex/
-              WHERE orders.id = $/id/
-            `,
-            {
-              fillabilityStatus: "cancelled",
-              id,
-              blockNumber: orderParams.txBlock,
-              logIndex: orderParams.logIndex,
-            }
-          );
+      // I don't really understand why this logic block is placed here.
+      // just comment out for tracking order with non-native token
+      // if (orderParams.askCurrency !== Sdk.Common.Addresses.Native[config.chainId]) {
+      //   if (!orderResult) {
+      //     return results.push({
+      //       id,
+      //       status: "unsupported-payment-token",
+      //     });
+      //   } else {
+      //     // If the order already exists set its fillability status as cancelled
+      //     // See https://github.com/reservoirprotocol/indexer/pull/1903/files#r976148340
+      //     await idb.none(
+      //       `
+      //         UPDATE orders SET
+      //           fillability_status = $/fillabilityStatus/,
+      //           expiration = to_timestamp(${orderParams.txTimestamp}),
+      //           updated_at = now(),
+      //           block_number = $/blockNumber/,
+      //           log_index = $/logIndex/
+      //         WHERE orders.id = $/id/
+      //       `,
+      //       {
+      //         fillabilityStatus: "cancelled",
+      //         id,
+      //         blockNumber: orderParams.txBlock,
+      //         logIndex: orderParams.logIndex,
+      //       }
+      //     );
 
-          return results.push({
-            id,
-            status: "success",
-            triggerKind: "cancel",
-            txHash: orderParams.txHash,
-            txTimestamp: orderParams.txTimestamp,
-            logIndex: orderParams.logIndex,
-            batchIndex: orderParams.batchIndex,
-          });
-        }
-      }
+      //     return results.push({
+      //       id,
+      //       status: "success",
+      //       triggerKind: "cancel",
+      //       txHash: orderParams.txHash,
+      //       txTimestamp: orderParams.txTimestamp,
+      //       logIndex: orderParams.logIndex,
+      //       batchIndex: orderParams.batchIndex,
+      //     });
+      //   }
+      // }
 
       // Check: order fillability
       let fillabilityStatus = "fillable";
