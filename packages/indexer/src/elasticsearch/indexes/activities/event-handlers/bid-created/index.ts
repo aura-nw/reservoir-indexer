@@ -11,6 +11,7 @@ import {
 } from "@/elasticsearch/indexes/activities/event-handlers/base";
 import _ from "lodash";
 import { logger } from "@/common/logger";
+import { toBuffer } from "@/common/utils";
 
 export class BidCreatedEventHandler extends BaseActivityEventHandler {
   public orderId: string;
@@ -116,6 +117,10 @@ export class BidCreatedEventHandler extends BaseActivityEventHandler {
     data.timestamp = data.originated_ts
       ? Math.floor(data.originated_ts)
       : Math.floor(data.created_ts);
+
+    data.event_tx_hash = this.txHash ? toBuffer(this.txHash) : undefined;
+    data.event_log_index = this.logIndex;
+    data.event_batch_index = this.batchIndex;
   }
 
   static async generateActivities(events: OrderEventInfo[]): Promise<ActivityDocument[]> {
