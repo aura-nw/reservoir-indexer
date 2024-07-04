@@ -423,10 +423,10 @@ export const handleEvents = async (events: EnhancedEvent[], onChainData: OnChain
           askPrice,
           baseEventParams.timestamp
         );
-        if (!prices.nativePrice) {
-          // We must always have the native price
-          break;
-        }
+        // if (!prices.nativePrice) {
+        //   // We must always have the native price
+        //   break;
+        // }
 
         onChainData.fillEventsOnChain.push({
           orderKind,
@@ -435,7 +435,7 @@ export const handleEvents = async (events: EnhancedEvent[], onChainData: OnChain
           orderSide: "buy",
           maker,
           taker,
-          price: prices.nativePrice,
+          price: askPrice,
           currencyPrice: askPrice,
           usdPrice: prices.usdPrice,
           contract: tokenContract,
@@ -453,7 +453,7 @@ export const handleEvents = async (events: EnhancedEvent[], onChainData: OnChain
           contract: tokenContract,
           tokenId,
           amount: "1",
-          price: prices.nativePrice,
+          price: askPrice,
           timestamp: baseEventParams.timestamp,
           maker,
           taker,
