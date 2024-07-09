@@ -125,6 +125,11 @@
     "kind": "marketplace"
   },
   {
+    "address": "0x5F8D2473414357b90B40bFa21B06cBD9BdD33C9d",
+    "domain": "evm.seekhype.io",
+    "kind": "marketplace"
+  },
+  {
     "address": "0x70bf5945845546716e628cedc8f83d82179a79e9",
     "domain": "snagsolutions.io",
     "kind": "marketplace"
