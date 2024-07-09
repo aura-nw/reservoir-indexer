@@ -231,7 +231,7 @@ export const save = async (orderInfos: OrderInfo[]): Promise<SaveResult[]> => {
 
       // Handle: source
       const sources = await Sources.getInstance();
-      let source = await sources.getOrInsert("zora.co");
+      let source = await sources.getOrInsert("evm.seekhype.io");
       if (metadata.source) {
         source = await sources.getOrInsert(metadata.source);
       }

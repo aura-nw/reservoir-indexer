@@ -116,7 +116,7 @@ const standardMintSources = new Map<CollectionMintStandard, string>();
 standardMintSources.set("manifold", "manifold.xyz");
 standardMintSources.set("seadrop-v1.0", "opensea.io");
 standardMintSources.set("thirdweb", "thirdweb.com");
-standardMintSources.set("zora", "zora.co");
+standardMintSources.set("zora", "evm.seekhype.io");
 standardMintSources.set("decent", "decent.xyz");
 standardMintSources.set("foundation", "foundation.app");
 standardMintSources.set("lanyard", "lanyard.org");
@@ -182,7 +182,7 @@ export const getOrderSourceByOrderKind = async (
       case "quixotic":
         return sources.getOrInsert("quixotic.io");
       case "zora-v3":
-        return sources.getOrInsert("zora.co");
+        return sources.getOrInsert("evm.seekhype.io");
       case "nouns":
         return sources.getOrInsert("nouns.wtf");
       case "cryptopunks":
