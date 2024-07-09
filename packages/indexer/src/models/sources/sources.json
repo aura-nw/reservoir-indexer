@@ -20,5 +20,15 @@
       "tokenUrlAvalanche": "https://opensea.io/assets/avalanche/${contract}/${tokenId}",
       "tokenUrlBase": "https://opensea.io/assets/base/${contract}/${tokenId}"
     }
+  },
+  "2": {
+    "domain": "evm.seekhype.io",
+    "domainHash": "0x727296dc",
+    "name": "seekhype",
+    "address": "0x5F8D2473414357b90B40bFa21B06cBD9BdD33C9d",
+    "data": {
+      "icon": "https://evm.seekhype.io/sh-evm-logo.svg",
+      "tokenUrlMainnet": "https://evm.seekhype.io/evm/asset/${contract}:${tokenId}"
+    }
   }
 }
