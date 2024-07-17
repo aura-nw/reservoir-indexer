@@ -6,7 +6,7 @@ export const Exchange: ChainIdToAddress = {
   [Network.Polygon]: "0x3634e984ba0373cfa178986fd19f03ba4dd8e469",
   [Network.EvmosTestnet]: "0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC",
   [Network.AuraTestnet]: "0x3ca4841C584afd6fa1AB248cE0F4876d1CEBd09C",
-  [Network.AuraSerenity]: "0xfCe37E8544Ae56088FE49e015d3848761D09990A",
+  [Network.AuraSerenity]: "0x1a7cD784bD81c6761A6bDD88E3508c737f0C800e",
   [Network.AuraEuphoria]: "0xA371d16fFDF669bB8A5A005D9e3476B41db756b2",
   [Network.AuraXstasy]: "0xc4Aa652A09f27184A98A37a6b35b7b3C91f6f830",
 };
