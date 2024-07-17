@@ -62,7 +62,7 @@ export const ERC1155FactoryV2: ChainIdToAddress = {
 
 export const OfferOmnibus: ChainIdToAddress = {
   [Network.AuraTestnet]: "0x14511dEfE1fbc147b7364d3A5A3ED1179bd0c707",
-  // [Network.AuraSerenity]: "0xc3A73d1b9870FEdDb782237aa8AF50167a5016A9",
-  // [Network.AuraEuphoria]: "0xA371d16fFDF669bB8A5A005D9e3476B41db756b2",
-  // [Network.AuraXstasy]: "0xc4Aa652A09f27184A98A37a6b35b7b3C91f6f830",
+  [Network.AuraSerenity]: "0x98605ae21Dd3BE686337A6d7a8f156d0d8BAeE92",
+  [Network.AuraEuphoria]: "0x0B0257bb9d3aA53e7b50b8568B5f79dA8185A8bc",
+  [Network.AuraXstasy]: "0xbf64f73074FA5dBF08c57962Fa4aE706F329BA9f",
 };
