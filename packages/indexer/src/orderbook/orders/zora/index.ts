@@ -17,21 +17,26 @@ import {
 } from "@/jobs/order-updates/order-updates-by-id-job";
 
 export type OrderIdParams = {
-  tokenContract: string;
-  tokenId: string;
+  tokenContract?: string;
+  tokenId?: string;
+  offerId?: string;
 };
 
 export type OrderInfo = {
   orderParams: {
     // SDK parameters
-    seller: string;
+    seller?: string;
     maker: string;
     tokenContract: string;
     tokenId: string;
+    offerId?: string;
     askPrice: string;
     askCurrency: string;
-    sellerFundsRecipient: string;
+    expiry?: number;
+    sellerFundsRecipient?: string;
     findersFeeBps: number;
+    listingFeeBps?: number;
+    listingFeeRecipient?: number;
     side: "sell" | "buy";
     // Validation parameters (for ensuring only the latest event is relevant)
     txHash: string;
@@ -46,7 +51,13 @@ export type OrderInfo = {
 export function getOrderId(orderParams: OrderIdParams) {
   const orderId = keccak256(
     ["string", "string", "uint256"],
-    ["zora-v3", orderParams.tokenContract, orderParams.tokenId]
+    orderParams.offerId
+      ? [
+          "zora-v3",
+          Sdk.Zora.Addresses.OfferOmnibus[config.chainId].toLowerCase(),
+          orderParams.offerId,
+        ]
+      : ["zora-v3", orderParams.tokenContract, orderParams.tokenId]
   );
   return orderId;
 }
@@ -85,44 +96,46 @@ export const save = async (orderInfos: OrderInfo[]): Promise<SaveResult[]> => {
       );
 
       // Check: sell order has Eth as payment token
-      if (orderParams.askCurrency !== Sdk.Common.Addresses.Native[config.chainId]) {
-        if (!orderResult) {
-          return results.push({
-            id,
-            status: "unsupported-payment-token",
-          });
-        } else {
-          // If the order already exists set its fillability status as cancelled
-          // See https://github.com/reservoirprotocol/indexer/pull/1903/files#r976148340
-          await idb.none(
-            `
-              UPDATE orders SET
-                fillability_status = $/fillabilityStatus/,
-                expiration = to_timestamp(${orderParams.txTimestamp}),
-                updated_at = now(),
-                block_number = $/blockNumber/,
-                log_index = $/logIndex/
-              WHERE orders.id = $/id/
-            `,
-            {
-              fillabilityStatus: "cancelled",
-              id,
-              blockNumber: orderParams.txBlock,
-              logIndex: orderParams.logIndex,
-            }
-          );
+      // I don't really understand why this logic block is placed here.
+      // just comment out for tracking order with non-native token
+      // if (orderParams.askCurrency !== Sdk.Common.Addresses.Native[config.chainId]) {
+      //   if (!orderResult) {
+      //     return results.push({
+      //       id,
+      //       status: "unsupported-payment-token",
+      //     });
+      //   } else {
+      //     // If the order already exists set its fillability status as cancelled
+      //     // See https://github.com/reservoirprotocol/indexer/pull/1903/files#r976148340
+      //     await idb.none(
+      //       `
+      //         UPDATE orders SET
+      //           fillability_status = $/fillabilityStatus/,
+      //           expiration = to_timestamp(${orderParams.txTimestamp}),
+      //           updated_at = now(),
+      //           block_number = $/blockNumber/,
+      //           log_index = $/logIndex/
+      //         WHERE orders.id = $/id/
+      //       `,
+      //       {
+      //         fillabilityStatus: "cancelled",
+      //         id,
+      //         blockNumber: orderParams.txBlock,
+      //         logIndex: orderParams.logIndex,
+      //       }
+      //     );
 
-          return results.push({
-            id,
-            status: "success",
-            triggerKind: "cancel",
-            txHash: orderParams.txHash,
-            txTimestamp: orderParams.txTimestamp,
-            logIndex: orderParams.logIndex,
-            batchIndex: orderParams.batchIndex,
-          });
-        }
-      }
+      //     return results.push({
+      //       id,
+      //       status: "success",
+      //       triggerKind: "cancel",
+      //       txHash: orderParams.txHash,
+      //       txTimestamp: orderParams.txTimestamp,
+      //       logIndex: orderParams.logIndex,
+      //       batchIndex: orderParams.batchIndex,
+      //     });
+      //   }
+      // }
 
       // Check: order fillability
       let fillabilityStatus = "fillable";
@@ -147,6 +160,11 @@ export const save = async (orderInfos: OrderInfo[]): Promise<SaveResult[]> => {
           });
         }
       }
+
+      const validFrom = `date_trunc('seconds', to_timestamp(${orderParams.txTimestamp}))`;
+      const validTo = orderParams.expiry
+        ? `date_trunc('seconds', to_timestamp(${orderParams.expiry}))`
+        : `'Infinity'`;
 
       if (orderResult) {
         // Decide whether the current trigger is the latest one
@@ -173,10 +191,8 @@ export const save = async (orderInfos: OrderInfo[]): Promise<SaveResult[]> => {
                 currency_price = $/price/,
                 value = $/price/,
                 currency_value = $/price/,
-                valid_between = tstzrange(date_trunc('seconds', to_timestamp(${
-                  orderParams.txTimestamp
-                })), 'Infinity', '[]'),
-                expiration = 'Infinity',
+                valid_between = tstzrange(${validFrom}, ${validTo}, '[]'),
+                expiration = ${validTo},
                 ${fillabilityStatus == "fillable" ? "originated_at = now()," : ""}
                 updated_at = now(),
                 taker = $/taker/,
@@ -235,9 +251,6 @@ export const save = async (orderInfos: OrderInfo[]): Promise<SaveResult[]> => {
       if (metadata.source) {
         source = await sources.getOrInsert(metadata.source);
       }
-
-      const validFrom = `date_trunc('seconds', to_timestamp(${orderParams.txTimestamp}))`;
-      const validTo = `'Infinity'`;
 
       orderValues.push({
         id,
