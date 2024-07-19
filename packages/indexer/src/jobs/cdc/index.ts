@@ -15,6 +15,8 @@ export const consumer = kafka.consumer({
   groupId: config.kafkaConsumerGroupId,
   maxBytesPerPartition: config.kafkaMaxBytesPerPartition || 1048576, // (default is 1MB)
   allowAutoTopicCreation: false,
+  sessionTimeout: 60000,
+  heartbeatInterval: 3000,
 });
 
 export async function startKafkaProducer(): Promise<void> {
@@ -76,7 +78,7 @@ export async function startKafkaConsumer(): Promise<void> {
             return;
           }
 
-          const event = JSON.parse(message.value!.toString());
+          const event = JSON.parse(message.value!.toString()).payload;
 
           if (batch.topic.endsWith("-dead-letter")) {
             logger.info(
