@@ -263,13 +263,10 @@ export const start = async (): Promise<void> => {
                 error.consumedPoints % 50 == 0)
             ) {
               const log = {
-                message: `${rateLimitKey} ${apiKey?.appName || ""} reached allowed rate limit ${
-                  rateLimitRule.rule.points
-                } credits in ${rateLimitRule.rule.duration}s by calling ${
-                  error.consumedPoints
-                } times on route ${request.route.path}${
-                  request.info.referrer ? ` from referrer ${request.info.referrer} ` : ""
-                } x-api-key ${key}`,
+                message: `${rateLimitKey} ${apiKey?.appName || ""} reached allowed rate limit ${rateLimitRule.rule.points
+                  } credits in ${rateLimitRule.rule.duration}s by calling ${error.consumedPoints
+                  } times on route ${request.route.path}${request.info.referrer ? ` from referrer ${request.info.referrer} ` : ""
+                  } x-api-key ${key}`,
                 route: request.route.path,
                 appName: apiKey?.appName || "",
                 key: rateLimitKey,

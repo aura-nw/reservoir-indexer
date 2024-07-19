@@ -12,7 +12,7 @@ import { logger } from "@/common/logger";
 import { config } from "@/config/index";
 import { getNetworkSettings } from "@/config/network";
 import { initIndexes } from "@/elasticsearch/indexes";
-import { startKafkaConsumer } from "@/jobs/cdc";
+import { startKafkaConsumer, consumer } from "@/jobs/cdc";
 import { RabbitMqJobsConsumer } from "@/jobs/index";
 import { FeeRecipients } from "@/models/fee-recipients";
 import { Sources } from "@/models/sources";
@@ -68,4 +68,7 @@ const setup = async () => {
   await redis.del("simplehash-fallback-debug-tokens");
 };
 
-setup().then(() => start());
+setup().then(() => {
+  logger.info(`kafka-consumer`, JSON.stringify(consumer, null, 2));
+  start();
+});

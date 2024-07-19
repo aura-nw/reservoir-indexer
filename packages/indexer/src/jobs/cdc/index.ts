@@ -15,6 +15,8 @@ export const consumer = kafka.consumer({
   groupId: config.kafkaConsumerGroupId,
   maxBytesPerPartition: config.kafkaMaxBytesPerPartition || 1048576, // (default is 1MB)
   allowAutoTopicCreation: false,
+  sessionTimeout: 60000,
+  heartbeatInterval: 3000,
 });
 
 export async function startKafkaProducer(): Promise<void> {
@@ -64,19 +66,75 @@ export async function startKafkaConsumer(): Promise<void> {
     })
   );
 
+  logger.info(`kafka-consumer`, `Subscribed to topics=${JSON.stringify(topicsToSubscribe)}`);
+
+  consumer.on(consumer.events.HEARTBEAT, async (event) => {
+    logger.info(
+      `kafka-consumer`,
+      JSON.stringify({
+        message: "Consumer heartbeat",
+        event,
+      })
+    )
+  });
+
+  consumer.on(consumer.events.CRASH, async (event) => {
+    logger.info(
+      `kafka-consumer`,
+      JSON.stringify({
+        message: "Consumer crashed",
+        event,
+      })
+    );
+    await restartKafkaConsumer();
+  });
+
+  consumer.on(consumer.events.DISCONNECT, async (event) => {
+    logger.info(
+      `kafka-consumer`,
+      JSON.stringify({
+        message: "Consumer disconnected",
+        event,
+      })
+    );
+    await restartKafkaConsumer();
+  });
+
+  consumer.on(consumer.events.STOP, async (event) => {
+    logger.info(
+      `kafka-consumer`,
+      JSON.stringify({
+        message: "Consumer stopped",
+        event,
+      })
+    );
+  });
+
+  consumer.on(consumer.events.CONNECT, async (event) => {
+    logger.info(
+      `kafka-consumer`,
+      JSON.stringify({
+        message: "Consumer connected",
+        event,
+      })
+    );
+  });
+
   await consumer.run({
     partitionsConsumedConcurrently: config.kafkaPartitionsConsumedConcurrently,
 
     eachBatchAutoResolve: true,
 
     eachBatch: async ({ batch, resolveOffset, heartbeat }) => {
+      await heartbeat();
+
       const messagePromises = batch.messages.map(async (message) => {
         try {
           if (!message?.value) {
             return;
           }
 
-          const event = JSON.parse(message.value!.toString());
+          const event = JSON.parse(message.value!.toString()).payload;
 
           if (batch.topic.endsWith("-dead-letter")) {
             logger.info(
@@ -130,47 +188,7 @@ export async function startKafkaConsumer(): Promise<void> {
     },
   });
 
-  consumer.on(consumer.events.CRASH, async (event) => {
-    logger.info(
-      `kafka-consumer`,
-      JSON.stringify({
-        message: "Consumer crashed",
-        event,
-      })
-    );
-    await restartKafkaConsumer();
-  });
-
-  consumer.on(consumer.events.DISCONNECT, async (event) => {
-    logger.info(
-      `kafka-consumer`,
-      JSON.stringify({
-        message: "Consumer disconnected",
-        event,
-      })
-    );
-    await restartKafkaConsumer();
-  });
-
-  consumer.on(consumer.events.STOP, async (event) => {
-    logger.info(
-      `kafka-consumer`,
-      JSON.stringify({
-        message: "Consumer stopped",
-        event,
-      })
-    );
-  });
-
-  consumer.on(consumer.events.CONNECT, async (event) => {
-    logger.info(
-      `kafka-consumer`,
-      JSON.stringify({
-        message: "Consumer connected",
-        event,
-      })
-    );
-  });
+  logger.info(`kafka-consumer`, "Consumer started");
 }
 
 // This can be used to restart the Kafka consumer, for example if the consumer is disconnected, or if we need to subscribe to new topics as

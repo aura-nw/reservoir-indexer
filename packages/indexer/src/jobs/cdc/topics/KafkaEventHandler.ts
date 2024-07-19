@@ -29,7 +29,7 @@ export abstract class KafkaEventHandler {
         default:
           logger.error(
             "kafka-event-handler",
-            `${this.topicName}: Unknown operation type: ${payload.op}`
+            `${this.topicName}: Unknown operation type: ${JSON.stringify(payload, null, 2)}`
           );
           break;
       }
@@ -44,8 +44,7 @@ export abstract class KafkaEventHandler {
 
       logger.error(
         "kafka-event-handler",
-        `${
-          this.topicName
+        `${this.topicName
         }: Error handling event: ${error}, topicToSendTo=${topicToSendTo}, payload=${JSON.stringify(
           payload
         )}, retryCount=${payload.retryCount}`

@@ -13,8 +13,8 @@
     "format": "prettier --cache --write \"packages/**/src/**/*.+(js|ts|json)\"",
     "prepare": "husky install",
     "release": "standard-version",
-    "indexer-docker:up": "docker-compose --project-directory packages/indexer up -d",
-    "indexer-docker:down": "docker-compose --project-directory packages/indexer down"
+    "indexer-docker:up": "docker compose --project-directory packages/indexer up -d",
+    "indexer-docker:down": "docker compose --project-directory packages/indexer down"
   },
   "dependencies": {
     "eslint": "^8.10.0",

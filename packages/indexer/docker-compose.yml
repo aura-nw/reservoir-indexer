@@ -1,0 +1,139 @@
+version: "3"
+
+services:
+  postgres:
+    image: debezium/postgres:14
+    command: postgres -N 2000
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=indexer
+    container_name: postgres
+    networks:
+      - local
+    ports:
+      - 5432:5432
+
+  redis:
+    image: redis:6.2.2
+    command: sh -c "redis-server --requirepass password"
+    networks:
+      - local
+    ports:
+      - 6379:6379
+
+  rabbitmq:
+    image: hunglv46/rabbitmq-delayed-message-exchange:latest
+    container_name: 'rabbitmq'
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - local
+
+  elasticsearch:
+    container_name: 'elasticsearch'
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.2
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    networks:
+      - local
+    ports:
+      - 9200:9200
+
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    container_name: "redisinsight"
+    ports:
+      - "8001:8001"
+    networks:
+      - local
+    depends_on:
+      - redis
+
+  adminer:
+    image: adminer:4-standalone
+    ports:
+      - "8080:8080"
+    container_name: "adminer"
+    networks:
+      - local
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.4
+    healthcheck:
+      test: echo srvr | nc zookeeper 2181 || exit 1
+      retries: 20
+      interval: 10s
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 2181:2181
+    container_name: zookeeper
+    networks:
+      - local
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.4
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    ports:
+      - 9092:9092
+      - 29092:29092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    container_name: kafka
+    networks:
+      - local
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    depends_on:
+      - kafka
+    ports:
+      - 8081:8080
+    environment:
+      KAFKA_CLUSTERS_0_NAME: reservoir-indexer-local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+    networks:
+      - local
+
+  kafka-connect:
+    container_name: kafka-connect
+    image: quay.io/debezium/connect:2.5
+    depends_on:
+      - kafka
+      - postgres
+      - zookeeper
+    ports:
+      - 8083:8083
+    links:
+      - kafka
+      - zookeeper
+    environment:
+      GROUP_ID: 1
+      CONFIG_STORAGE_TOPIC: my_connect_configs
+      OFFSET_STORAGE_TOPIC: my_connect_offsets
+      STATUS_STORAGE_TOPIC: my_connect_statuses
+      BOOTSTRAP_SERVERS: kafka:9092
+      ADVERTISED_HOST_NAME: kafka
+    networks:
+      - local
+      
+networks:
+  local:
+    driver: bridge
