@@ -5,11 +5,11 @@ import { config } from "@/config/index";
 const kafka = new Kafka({
   clientId: config.kafkaStreamClientId,
   brokers: config.kafkaStreamBrokers,
-  ssl: {
-    rejectUnauthorized: false,
-    ca: config.kafkaStreamCertificateCa,
-    key: config.kafkaStreamCertificateKey,
-    cert: config.kafkaStreamCertificateCert,
+  ssl: false,
+  sasl: {
+    mechanism: "scram-sha-256",
+    username: config.kafkaStreamUsername,
+    password: config.kafkaStreamPassword,
   },
   logLevel: logLevel.ERROR,
 });
