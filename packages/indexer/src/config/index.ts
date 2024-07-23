@@ -74,7 +74,8 @@ export const config = {
   kafkaStreamCertificateCa: String(process.env.KAFKA_STREAM_CERTIFICATE_CA),
   kafkaStreamCertificateKey: String(process.env.KAFKA_STREAM_CERTIFICATE_KEY),
   kafkaStreamCertificateCert: String(process.env.KAFKA_STREAM_CERTIFICATE_CERT),
-
+  kafkaStreamUsername: String(process.env.KAFKA_SASL_USERNAME),
+  kafkaStreamPassword: String(process.env.KAFKA_SASL_PASSWORD),
   maxTokenSetSize: 100000,
 
   awsAccessKeyId: String(process.env.AWS_ACCESS_KEY_ID || process.env.FC_AWS_ACCESS_KEY_ID),
