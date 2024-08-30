@@ -114,6 +114,9 @@ export const getNetworkName = () => {
     case 1238:
       return "aura-xstasy-1";
 
+    case 1513:
+      return "story-protocol-testnet";
+
     default:
       return "unknown";
   }
@@ -1934,6 +1937,18 @@ export const getNetworkSettings = (): NetworkSettings => {
         lastBlockLatency: 5,
       };
     }
+
+    case 1513: {
+      return {
+        ...defaultNetworkSettings,
+        isTestnet: true,
+        enableWebSocket: false,
+        realtimeSyncMaxBlockLag: 32,
+        realtimeSyncFrequencySeconds: 5,
+        lastBlockLatency: 5,
+      };
+    }
+
     // Default
     default:
       return {

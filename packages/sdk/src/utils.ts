@@ -161,6 +161,7 @@ export enum Network {
   AuraSerenity = 1236,
   AuraEuphoria = 6321,
   AuraXstasy = 6322,
+  StoryProtocolTestnet = 1513,
 }
 
 export type ChainIdToAddress = { [chainId: number]: string };
